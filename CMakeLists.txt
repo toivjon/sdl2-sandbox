@@ -23,5 +23,5 @@ add_executable(sdl2_sanbox ${SOURCES})
 
 # define which SDL2 libraries are being linked.
 target_link_libraries(sdl2_sanbox 
-    ${SDL2_LIBRARIES}
+    ${SDL2_LIBRARY}
 )
