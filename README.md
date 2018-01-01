@@ -15,6 +15,6 @@ https://www.libsdl.org/download-2.0.php
 
 Windows OS also requires the following environment variables to be set.
 
-SDL2DIR
+* SDL2DIR
    A variable that should point to the root location of the SDL2.
 
