@@ -19,9 +19,9 @@ include_directories(
 )
 
 # define sources that are used to build an executable.
-add_executable(sdl2_sanbox ${SOURCES})
+add_executable(sdl2_sandbox ${SOURCES})
 
 # define which SDL2 libraries are being linked.
-target_link_libraries(sdl2_sanbox 
+target_link_libraries(sdl2_sandbox 
     ${SDL2_LIBRARY}
 )
