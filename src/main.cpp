@@ -3,6 +3,20 @@
 int main(int argc, char* argv[])
 {
     // ========================================================================
+    // SDL allows configuration variables to be used as configuration hints.
+    // They may or may not be supported or applicable on any given platform.
+    // However, they can be used as hints to note how the SDL should behave.
+    //
+    // The full list of hints: https://wiki.libsdl.org/CategoryHints
+    //
+    // Hints can be either provided with normal or priorited way. Prioritized
+    // hints will force the hint to be handled in a desired importance level.
+    //
+    // Note that hint state changes can also be listened with callbacks.
+    // ========================================================================
+    SDL_SetHint(SDL_HINT_RENDER_DRIVER, "opengl");
+
+    // ========================================================================
     // Initialize the SDL along with desired subsystems.
     // SDL_INIT_TIMER............Include SDL timer support.
     // SDL_INIT_AUDIO............Include SDL audio (???) support.
