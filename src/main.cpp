@@ -14,7 +14,8 @@ int main(int argc, char* argv[])
     //
     // Note that hint state changes can also be listened with callbacks.
     // ========================================================================
-    SDL_SetHint(SDL_HINT_RENDER_DRIVER, "opengl");
+    auto hintResult = SDL_SetHint(SDL_HINT_RENDER_DRIVER, "opengl");
+    SDL_Log("[%d] SDL uses OpenGL\n", hintResult);
 
     // ========================================================================
     // Initialize the SDL along with desired subsystems.
