@@ -18,6 +18,17 @@ int main(int argc, char* argv[])
     SDL_Log("[%d] SDL uses OpenGL\n", hintResult);
 
     // ========================================================================
+    // SDL provides an easy 3-function interface to indicate errors.
+    // Errors are also automatically added by the SDL if SDL functions fail.
+    // ========================================================================
+    SDL_Log("SDL error management testing:\n");
+    SDL_Log("\tInitially: %s\n", SDL_GetError());
+    SDL_SetError("Custom error message!");
+    SDL_Log("\tAfter set: %s\n", SDL_GetError());
+    SDL_ClearError();
+    SDL_Log("\t  Cleared: %s\n", SDL_GetError());
+
+    // ========================================================================
     // Initialize the SDL along with desired subsystems.
     // SDL_INIT_TIMER............Include SDL timer support.
     // SDL_INIT_AUDIO............Include SDL audio (???) support.
