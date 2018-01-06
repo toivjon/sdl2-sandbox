@@ -67,6 +67,43 @@ int main(int argc, char* argv[])
     SDL_Log("[%d] Events\n", SDL_WasInit(SDL_INIT_EVENTS) != 0);
 
     // ========================================================================
+    // ASSERTIONS
+    // ========================================================================
+    // SDL contains three (+ disabled) different levels of assertions.
+    // 
+    // SDL_assert_release....A release level assertion.
+    // SDL_assert............A debug level assertion.
+    // SDL_assert_paranoid...A trace level assertion.
+    //
+    // Assertion level is defined by redefining the SDL_ASSERT_LEVEL value.
+    //
+    // 0...Disables all assertions.
+    // 1...Enables SDL_assert_release (default for release).
+    // 2...Enables SDL_assert and SDL_assert_release (default for debug).
+    // 3...Enables SDL_assert_paranoid, SDL_assert and SDL_assert_release.
+    // 
+    // Assertions are being tracked by the SDL. While assertions can be ignored
+    // by continuing the program execution, we are able to get assertion report
+    // from the framework. This report can be used to describe all failures.
+    //
+    // Note that SDL also allows setting a custom assertion handler if desired.
+    // ========================================================================
+    SDL_assert_release(true == true);
+    SDL_assert(true == false);
+    SDL_assert_paranoid(true == true);
+    const auto* item = SDL_GetAssertionReport();
+    while (item) {
+        SDL_Log("%s %s (%s:%d) triggered %u times, always ignore: %s.\n",
+                item->condition,
+                item->function,
+                item->filename,
+                item->linenum,
+                item->trigger_count,
+                item->always_ignore ? "yes" : "no");
+        item = item->next;
+    }
+
+    // ========================================================================
     // EVENTS
     // ========================================================================
     // SDL uses an event queue to store and distribute events. This system is
