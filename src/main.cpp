@@ -1,5 +1,23 @@
 #include <SDL.h>
 
+// ============================================================================
+// TIMERS
+// ============================================================================
+// An example SDL timer callback function.
+//
+// This function is as a callback function that is called by the SDL framework
+// timer functionality on periodic intervals after being registered with the
+// SDL_AddTimer function.
+//
+// Function return value specifies when SDL should call the function for the
+// next time. If the function returns 0, then the timer is being cancelled.
+// ============================================================================
+static Uint32 timer_callback(Uint32 interval, void* param)
+{
+    SDL_Log("\tSDL called the timer callback function!");
+    return interval;
+}
+
 int main(int argc, char* argv[])
 {
     // ========================================================================
@@ -46,7 +64,7 @@ int main(int argc, char* argv[])
     //
     // Definitions can be OR'd together (i.e. SDL_INIT_TIMER | SDL_INIT_AUDIO)
     // ========================================================================
-    if (SDL_Init(SDL_INIT_VIDEO) != 0) {
+    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) != 0) {
         SDL_Log("Failed to initialize SDL: %s\n", SDL_GetError());
         return -1;
     }
@@ -89,7 +107,7 @@ int main(int argc, char* argv[])
     // Note that SDL also allows setting a custom assertion handler if desired.
     // ========================================================================
     SDL_assert_release(true == true);
-    SDL_assert(true == false);
+    SDL_assert(true == true);
     SDL_assert_paranoid(true == true);
     const auto* item = SDL_GetAssertionReport();
     while (item) {
@@ -102,6 +120,35 @@ int main(int argc, char* argv[])
                 item->always_ignore ? "yes" : "no");
         item = item->next;
     }
+
+    // ========================================================================
+    // TIMERS
+    // ========================================================================
+    // SDL contains a support the following timer features.
+    //
+    // Timer.................Add/remove timer called on a specified interval.
+    // Delay.................Make the current thread to wait for some time.
+    // Performance Counter...A high resolution timer value and frequency.
+    // Ticks.................The number of millis since SDL init.
+    // ========================================================================
+    SDL_Log("Testing SDL timer features:\n");
+    SDL_Log("\tPerformance counter frequency: %u\n", SDL_GetPerformanceFrequency());
+    SDL_Log("\tPerforming a small SDL one second delay and using timers.\n");
+    SDL_Log("\t%04u --- %u\n", SDL_GetTicks(), SDL_GetPerformanceCounter());
+    SDL_Delay(1000);
+    SDL_Log("\t%04u --- %u\n", SDL_GetTicks(), SDL_GetPerformanceCounter());
+
+    SDL_Log("\tChecking how the SDL periodic timer works.\n");
+    SDL_Log("\tCreating a timer with 500 millisecond interval.\n");
+    auto timerId = SDL_AddTimer(500, timer_callback, nullptr);
+    if (timerId == 0) {
+        SDL_Log("\tUnable to create SDL timer: %s\n", SDL_GetError());
+    }
+    SDL_Delay(1010);
+    if (SDL_RemoveTimer(timerId) == SDL_FALSE) {
+        SDL_Log("\tSDL was unable to find a timer with id: %d\n", timerId);
+    }
+    SDL_Log("\tRemoved the timer.\n");
 
     // ========================================================================
     // EVENTS
