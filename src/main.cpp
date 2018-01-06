@@ -66,7 +66,41 @@ int main(int argc, char* argv[])
     SDL_Log("[%d] Game controller\n", SDL_WasInit(SDL_INIT_GAMECONTROLLER) != 0);
     SDL_Log("[%d] Events\n", SDL_WasInit(SDL_INIT_EVENTS) != 0);
 
-    // ...
+    // ========================================================================
+    // EVENTS
+    // ========================================================================
+    // SDL uses an event queue to store and distribute events. This system is
+    // being initialized when the framework init contains SDL_INIT_EVENTS type.
+    // (NOTE: The SDL_INIT_EVENTS can be implied by defining other subsystems.)
+    // 
+    // SDL events are built as unions where the structure is following:
+    // --- type
+    // --- union-structure that contains type specific substructure.
+    //
+    // The full list of types: https://wiki.libsdl.org/SDL_EventType
+    //
+    // Each event type is related to a single strcture within the event e.g.
+    // on event SDL_KEYDOWN the details are located in the event.key structure.
+    //
+    // Note that SDL can be set to ignore (i.e. disable) unwanted event types.
+    //
+    // Events can be also filtered/handled from the queue with custom filters.
+    // ========================================================================
+    SDL_EventState(SDL_MOUSEBUTTONDOWN, SDL_IGNORE);
+    SDL_EventState(SDL_MOUSEBUTTONUP, SDL_IGNORE);
+
+    auto running = true;
+    while (running) {
+        SDL_Event event;
+        while (SDL_PollEvent(&event)) {
+            switch (event.type) {
+                case SDL_QUIT:
+                    running = false;
+                    break;
+            }
+        }
+        // ...
+    }
 
     // ========================================================================
     // Shut down all SDL subsystems.
