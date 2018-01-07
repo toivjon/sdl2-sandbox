@@ -252,6 +252,55 @@ int main(int argc, char* argv[])
     SDL_Log("\tAtomic integer is now to %d.\n", SDL_AtomicGet(&sAtomicInt));
 
     // ========================================================================
+    // DATA I/O ABSTRACTION
+    // ========================================================================
+    // SDL has a support for data reading and writing from various sources.
+    //
+    // 1. Reading from a read-only memory buffer (const void*).
+    // 2. Reading and writing with a FILE pointer (not available in Windows!).
+    // 3. Reading and writing from a file based on a provided filename.
+    // 4. Reading and writing with a memory buffer (void*).
+    //
+    // All reading and writing does actually use a SDL_RWops structure. It can
+    // be used to perform different kinds of basic file operations including.
+    //
+    // 1. Allocate
+    // 2. Free
+    // 3. Allocate from source (inc. Allocate).
+    // 4. Close (inc. Free).
+    // 5. Read
+    // 6. Seek
+    // 7. Get stream size.
+    // 8. Get current stream pointer location.
+    // 9. Write
+    // 
+    // SDL also contains support for reading and writing individual 1,2,4 and 8
+    // bytes with a byte-order conversion, which ensures byte order correctness.
+    // ========================================================================
+    SDL_Log("Testing SDL data I/O abstraction features:\n");
+    char buffer[] = "foo";
+    SDL_Log("\tbuffer content before write: %s\n", buffer);
+
+    // read buffer into a SDL specific data structure.
+    auto data = SDL_RWFromMem(buffer, sizeof(buffer));
+    if (data == NULL) {
+        SDL_Log("\tFailed to load buffer to structure: %s\n", SDL_GetError());
+    } else {
+        // append data to buffer.
+        const char* addition = "bar";
+        auto len = SDL_strlen(addition);
+        if (SDL_RWwrite(data, addition, sizeof(char), len) != len) {
+            SDL_Log("\tFailed to write buffer data: %s\n", SDL_GetError());
+        }
+    }
+
+    // close (and free) the SDL specific data structure.
+    if (SDL_RWclose(data) != 0) {
+        SDL_Log("\tFailed to close the structure buffer: %s\n", SDL_GetError());
+    }
+    SDL_Log("\tbuffer content after write: %s\n");
+
+    // ========================================================================
     // EVENTS
     // ========================================================================
     // SDL uses an event queue to store and distribute events. This system is
