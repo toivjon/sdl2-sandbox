@@ -1,5 +1,7 @@
 #include <SDL.h>
 
+static SDL_atomic_t sAtomicInt;
+
 // ============================================================================
 // TIMERS
 // ============================================================================
@@ -16,6 +18,25 @@ static Uint32 timer_callback(Uint32 interval, void* param)
 {
     SDL_Log("\tSDL called the timer callback function!");
     return interval;
+}
+
+// ============================================================================
+// THREADS
+// ============================================================================
+// An example SDL thread function.
+// 
+// This function is an example of a SDL thread function. Functions of this kind
+// will be called when they are used along the SDL_CreateThread function.
+//
+// Function return value will be passed to issuer via the SDL_WaitThread.
+// ============================================================================
+static int thread_function(void* data)
+{
+    SDL_Delay(*static_cast<int*>(data));
+    SDL_Log("\tSDL called a thread function on thread %d!", SDL_ThreadID());
+
+    SDL_AtomicAdd(&sAtomicInt, 1);
+    return 0;
 }
 
 int main(int argc, char* argv[])
@@ -149,6 +170,50 @@ int main(int argc, char* argv[])
         SDL_Log("\tSDL was unable to find a timer with id: %d\n", timerId);
     }
     SDL_Log("\tRemoved the timer.\n");
+
+    // ========================================================================
+    // THREADS
+    // ========================================================================
+    // SDL contains the following inbuilt support for multithreading.
+    //
+    // 1. Threads
+    // 2. Synchronization primitives
+    // 3. Atomic operations
+    //
+    // Thread management contains the following functionality.
+    // 
+    // 1. Thread creation.
+    // 2. Thread waiting.
+    // 3. Thread detaching.
+    // 4. Thread-local storage.
+    // 5. Thread priorities (LOW, NORMAL[default] and HIGH).
+    // 
+    // Synchronization primitives contain the following structures.
+    //
+    // 1. Condition variables
+    // 2. Mutexes
+    // 3. Semaphores
+    //
+    // Atomic operations support the following 
+    // 
+    // !!! IMPORTANT NOTE !!!
+    // Note that window creation, rendering or event receiving cannot be done
+    // in any other thread than within the main thread of the application.
+    // ========================================================================
+    SDL_Log("Testing SDL threading features:\n");
+    const auto cpus = SDL_GetCPUCount();
+    SDL_Log("\tDetected %d logical CPU cores on the client computer.\n", cpus);
+    auto threadDelay = 2000;
+    auto thread1 = SDL_CreateThread(thread_function, "foo-1", &threadDelay);
+    auto thread2 = SDL_CreateThread(thread_function, "foo-2", &threadDelay);
+    auto thread3 = SDL_CreateThread(thread_function, "foo-3", &threadDelay);
+
+    auto threadReturn = 0;
+    SDL_DetachThread(thread1);
+    SDL_WaitThread(thread2, &threadReturn);
+    SDL_WaitThread(thread3, &threadReturn);
+    SDL_Log("\tAll threads have processed their work.\n");
+    SDL_Log("\tAtomic integer is now to %d.\n", SDL_AtomicGet(&sAtomicInt));
 
     // ========================================================================
     // EVENTS
