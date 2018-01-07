@@ -106,6 +106,44 @@ int main(int argc, char* argv[])
     SDL_Log("[%d] Events\n", SDL_WasInit(SDL_INIT_EVENTS) != 0);
 
     // ========================================================================
+    // SYSTEM INFORMATION
+    // ========================================================================
+    // SDL is capable to detect various things about the client system.
+    //
+    // 1. Platform name (Windows, Mac OS X, Linux, iOS or Android).
+    // 1. Absolute application path (guaranteed to end with path separator).
+    // 2. Preference path for user data (guaranteed to end with path separator).
+    // 3. Number of logical CPU cores.
+    // 4. CPU L1 cache line size.
+    // 5. Amount of RAM.
+    // 6. Support for different kinds of CPU features.
+    // ========================================================================
+    SDL_Log("SDL system information testing:\n");
+    auto* basePath = SDL_GetBasePath();
+    auto* prefPath = SDL_GetPrefPath("organization_name", "application_name");
+    SDL_Log("\tPlatform: %s\n", SDL_GetPlatform());
+    SDL_Log("\tBase path: %s\n", (basePath == NULL ? "null" : basePath));
+    SDL_Log("\tPref path: %s\n", (prefPath == NULL ? "null" : prefPath));
+    SDL_Log("\tLogical CPU cores: %d\n", SDL_GetCPUCount());
+    SDL_Log("\tCPU L1 cache line: %d bytes\n", SDL_GetCPUCacheLineSize());
+    SDL_Log("\tRAM: %d MB\n", SDL_GetSystemRAM());
+    SDL_Log("SDL system information about CPU feature support:");
+    SDL_Log("\t[%d] 3DNow\n", SDL_Has3DNow());
+    SDL_Log("\t[%d] AVX\n", SDL_HasAVX());
+    SDL_Log("\t[%d] AVX2\n", SDL_HasAVX2());
+    SDL_Log("\t[%d] AltiVec\n", SDL_HasAltiVec());
+    SDL_Log("\t[%d] MMX\n", SDL_HasMMX());
+    SDL_Log("\t[%d] RDTSC\n", SDL_HasRDTSC());
+    SDL_Log("\t[%d] SSE\n", SDL_HasSSE());
+    SDL_Log("\t[%d] SSE2\n", SDL_HasSSE2());
+    SDL_Log("\t[%d] SSE3\n", SDL_HasSSE3());
+    SDL_Log("\t[%d] SSE41\n", SDL_HasSSE41());
+    SDL_Log("\t[%d] SSE42\n", SDL_HasSSE42());
+    SDL_free(basePath);
+    SDL_free(prefPath);
+
+
+    // ========================================================================
     // ASSERTIONS
     // ========================================================================
     // SDL contains three (+ disabled) different levels of assertions.
@@ -201,8 +239,6 @@ int main(int argc, char* argv[])
     // in any other thread than within the main thread of the application.
     // ========================================================================
     SDL_Log("Testing SDL threading features:\n");
-    const auto cpus = SDL_GetCPUCount();
-    SDL_Log("\tDetected %d logical CPU cores on the client computer.\n", cpus);
     auto threadDelay = 2000;
     auto thread1 = SDL_CreateThread(thread_function, "foo-1", &threadDelay);
     auto thread2 = SDL_CreateThread(thread_function, "foo-2", &threadDelay);
