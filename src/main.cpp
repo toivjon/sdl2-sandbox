@@ -300,6 +300,24 @@ int main(int argc, char* argv[])
     SDL_Log("\tbuffer content after write: %s\n");
 
     // ========================================================================
+    // GRAPHICS CARD MANAGEMENT
+    // ========================================================================
+    // SDL is capable to query some very basic information about video drivers.
+    // 
+    // 1. The number of available drivers.
+    // 2. A name for each available driver.
+    // 3. The name of the currently used video driver. 
+    // ========================================================================
+    auto numVideoDrivers = SDL_GetNumVideoDrivers();
+    
+    SDL_Log("Testing SDL graphics card features:\n");
+    SDL_Log("\tThe number of video drivers: %d\n", numVideoDrivers);
+    for (auto i = 0; i < numVideoDrivers; i++) {
+        SDL_Log("\t\t[%d] driver: %s\n", i, SDL_GetVideoDriver(i));
+    }
+    SDL_Log("\tCurrent video driver: %s\n", SDL_GetCurrentVideoDriver());
+
+    // ========================================================================
     // EVENTS
     // ========================================================================
     // SDL uses an event queue to store and distribute events. This system is
