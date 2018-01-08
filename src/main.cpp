@@ -311,11 +311,88 @@ int main(int argc, char* argv[])
     auto numVideoDrivers = SDL_GetNumVideoDrivers();
     
     SDL_Log("Testing SDL graphics card features:\n");
-    SDL_Log("\tThe number of video drivers: %d\n", numVideoDrivers);
+    SDL_Log("\tNumber of video drivers: %d\n", numVideoDrivers);
     for (auto i = 0; i < numVideoDrivers; i++) {
         SDL_Log("\t\t[%d] driver: %s\n", i, SDL_GetVideoDriver(i));
     }
     SDL_Log("\tCurrent video driver: %s\n", SDL_GetCurrentVideoDriver());
+
+    // ========================================================================
+    // DISPLAY MANAGEMENT
+    // ========================================================================
+    // SDL is capable to query some abstract information about the displays.
+    //
+    // 1. The number of available displays.
+    // 2. The name for each available display.
+    // 3. Diagonal, horizontal and vertical dots-per-inch (DPI).
+    // 4. The currently active display mode.
+    // 5. The currently active OS desktop display mode.
+    // 6. Enumeration of all display modes for a display.
+    // 7. System and usable boundaries for each display.
+    // 8. Finding a closest matching display mode for a provided mode.
+    // ========================================================================
+    auto numVideoDisplays = SDL_GetNumVideoDisplays();
+
+    SDL_Log("Testing SDL display features:\n");
+    SDL_Log("\tNumber of displays: %d\n", numVideoDisplays);
+    for (auto i = 0; i < numVideoDisplays; i++) {
+        SDL_Log("\tDisplay [%d] information:\n", i);
+        SDL_Log("\t\tName: %s\n", SDL_GetDisplayName(i));
+
+        auto ddpi = 0.f;
+        auto hdpi = 0.f;
+        auto vdpi = 0.f;
+        if (SDL_GetDisplayDPI(i, &ddpi, &hdpi, &vdpi) == 0) {
+            SDL_Log("\t\tDisplay v-dpi: %.2f h-dpi: %.2f d-dpi: %.2f",
+                vdpi,
+                hdpi,
+                ddpi);
+        }
+
+        SDL_DisplayMode mode;
+        if (SDL_GetCurrentDisplayMode(i, &mode) == 0) {
+            SDL_Log("\t\tCurrent mode: %d bpp %dx%d %dhz",
+                SDL_BITSPERPIXEL(mode.format),
+                mode.w,
+                mode.h,
+                mode.refresh_rate);
+        }
+
+        if (SDL_GetDesktopDisplayMode(i, &mode) == 0) {
+            SDL_Log("\t\tDesktop mode: %d bpp %dx%d %dhz",
+                SDL_BITSPERPIXEL(mode.format),
+                mode.w,
+                mode.h,
+                mode.refresh_rate);
+        }
+
+        SDL_Rect rect;
+        if (SDL_GetDisplayBounds(i, &rect) == 0) {
+            SDL_Log("\t\tDisplay bounds position: %dx%d size: %dx%d",
+                rect.x, rect.y,
+                rect.w, rect.h);
+        }
+
+        if (SDL_GetDisplayUsableBounds(i, &rect) == 0) {
+            SDL_Log("\t\tUsable display bounds position: %dx%d size: %dx%d",
+                rect.x, rect.y,
+                rect.w, rect.h);
+        }
+
+        auto numDisplayModes = SDL_GetNumDisplayModes(i);
+        SDL_Log("\t\tNumber of display modes: %d\n", numDisplayModes);
+        if (numDisplayModes >= 1) {
+            for (auto j = 0; j < numDisplayModes; j++) {
+                SDL_GetDisplayMode(i, j, &mode);
+                SDL_Log("\t\t\t%d bpp %dx%d %dhz",
+                    SDL_BITSPERPIXEL(mode.format),
+                    mode.w,
+                    mode.h,
+                    mode.refresh_rate);
+            }
+        }
+
+    }
 
     // ========================================================================
     // EVENTS
