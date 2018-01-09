@@ -395,6 +395,92 @@ int main(int argc, char* argv[])
     }
 
     // ========================================================================
+    // WINDOW MANAGEMENT
+    // ========================================================================
+    // SDL uses an own abstraction layout on top of the traditional OS window
+    // handles. The framework provides three functions to create new windows.
+    // 
+    // SDL_CreateWindow..............Builds a SDL window.
+    // SDL_CreateWindowAndRenderer...Builds a SDL window and default renderer.
+    // SDL_CreateWindowFrom..........Builds a SDL window from a native window.
+    //
+    // SDL allows the usage of window construction flags when building a window
+    // from scratch (not from native window). Here is a list of those flags.
+    //
+    // SDL_WINDOW_FULLSCREEN...........Fullscreen window.
+    // SDL_WINDOW_FULLSCREEN_DESKTOP...Fullscreen window with desktop resolution.
+    // SDL_WINDOW_OPENGL...............OpenGL context supported window.
+    // SDL_WINDOW_HIDDEN...............Window which is not visible.
+    // SDL_WINDOW_BORDERLESS...........Window without decorations.
+    // SDL_WINDOW_RESIZABLE............Window that can be resized.
+    // SDL_WINDOW_MINIMIZED............Window that is minimized.
+    // SDL_WINDOW_MAXIMIZED............Window that is maximized.
+    // SDL_WINDOW_INPUT_GRABBED........Window that has grabbed input focus.
+    // SDL_WINDOW_ALLOW_HIGHDPI........Window with high-DPI mode (if supported)
+    //
+    // There are also some additional window flags that can be used when doing
+    // a query for the current state of the SDL window. See the following list.
+    //
+    // SDL_WINDOW_SHOWN...........Window is visible.
+    // SDL_WINDOW_INPUT_FOCUS.....Window has focus.
+    // SDL_WINDOW_MOUSE_FOCUS.....Window has mouse focus.
+    // SDL_WINDOW_FOREIGN.........Window is not created by SDL.
+    // SDL_WINDOW_MOUSE_CAPTURE...Window has mouse captured.
+    // SDL_WINDOW_ALWAYS_ON_TOP...[X11] Window is always top on others.
+    // SDL_WINDOW_SKIP_TASKBAR....[X11] Window is not in taskbar.
+    // SDL_WINDOW_UTILITY.........[X11] Window is an utility window.
+    // SDL_WINDOW_TOOLTIP.........[X11] Window is a tooltip.
+    // SDL_WINDOW_POPUP_MENU......[X11] Window is a popup menu.
+    //
+    // In addition to previously mentioned window flags, SDL provides a way to
+    // define and query some following special management for each SDL window.
+    //
+    // * Visibility
+    // * Borders
+    // * Window owner display brightness (gamma).
+    // * An arbitary named pointer with window.
+    // * A fullscreen window display mode.
+    // * A window fullscreen mode (real / desktop / none).
+    // * The gamma ramp for the window owner display.
+    // * Grap input to target window.
+    // * Callbacks to define window special properties.
+    // * Window icon from a SDL_Surface.
+    // * Input focus state of a window.
+    // * The maximum size of the window.
+    // * The minimum size for the window.
+    // * The parent window for a window to act modal.
+    // * The opacity of the window (directFB, X11, Cocoa, Windows).
+    // * The position for the window.
+    // * Whether a user is able to resize the window.
+    // * The size of the window client area.
+    // * The title of the window.
+    // * Set window on top of other windows.
+    // * Get the numeric ID of the window (for logging purposes).
+    // * Get the index of the parent display of the window.
+    // * An ability to update fully/partially the window surface on the screen.
+    // 
+    // SDL also contains a way to toggle the screensaver state for the duration
+    // of the application execution and also provides a way to show small info
+    // message boxes that can contain informative messages for the users.
+    // ========================================================================
+    SDL_Log("Testing SDL window management features:\n");
+    
+    // construct a new SDL window with the name, position, size and flags.
+    auto window = SDL_CreateWindow("foo", 50, 50, 800, 600, SDL_WINDOW_OPENGL);
+    if (window == NULL) {
+        SDL_Log("Failed to create a new SDL window: %s\n", SDL_GetError());
+    } else {
+        SDL_SetWindowResizable(window, SDL_TRUE);
+        SDL_SetWindowMaximumSize(window, 1024, 768);
+        SDL_SetWindowMinimumSize(window, 640, 480);
+        SDL_SetWindowTitle(window, "foobar");
+        SDL_RaiseWindow(window);
+    }
+
+    // enable to show a super simple message box to user.
+    // SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Foo!", "Bar!", window);
+
+    // ========================================================================
     // EVENTS
     // ========================================================================
     // SDL uses an event queue to store and distribute events. This system is
@@ -432,6 +518,7 @@ int main(int argc, char* argv[])
 
     // ========================================================================
     // Shut down all SDL subsystems.
+    SDL_DestroyWindow(window);
     SDL_Quit();
     
     return 0;
