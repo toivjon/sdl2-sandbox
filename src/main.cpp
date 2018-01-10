@@ -481,6 +481,35 @@ int main(int argc, char* argv[])
     // SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Foo!", "Bar!", window);
 
     // ========================================================================
+    // RECTANGLES AND POINTS
+    // ========================================================================
+    // SDL contains a support for two kinds of geometric primitives.
+    //
+    // 1. SDL_Point......A two-dimensional point used also to define a size.
+    // 2. SDL_Rect.......A two-dimensional definition of a rectangle.
+    //
+    // SDL has a in-built support for some minor functions that can be used to 
+    // perform some basic tasks. See the following list of functions.
+    //
+    // 1. Calculate the minimumal rectangle that encloses the set of points.
+    // 2. Check whether two rectangles intersect.
+    // 3. Calculate the intersection rectangle between two intersecting rects.
+    // 4. Calculate the intersection point between a line and a rectangle.
+    // 5. Check whether the given point resides inside a rectangle.
+    // 6. Check whether the given rectangle has not area.
+    // 7. Equality of two rectangles.
+    // 8. Union of two rectangles.
+    // ========================================================================
+    SDL_Log("Testing SDL rect features:\n");
+    SDL_Rect rect1 = {100, 200, 300, 400};
+    SDL_Rect rect2 = {200, 100, 300, 400};
+    SDL_Log("\rect1: x=%d y=%d w=%d h=%d\n", rect1.x, rect1.y, rect1.w, rect1.h);
+    SDL_Log("\rect2: x=%d y=%d w=%d h=%d\n", rect2.x, rect2.y, rect2.w, rect2.h);
+    SDL_Rect rect3;
+    SDL_UnionRect(&rect1, &rect2, &rect3);
+    SDL_Log("\t\tunion: x=%d y=%d w=%d h=%d\n", rect3.x, rect3.y, rect3.w, rect3.h);
+
+    // ========================================================================
     // EVENTS
     // ========================================================================
     // SDL uses an event queue to store and distribute events. This system is
