@@ -1,3 +1,24 @@
+// ============================================================================
+// SDL2 Sandbox
+// ============================================================================
+// This application provides a sandbox to play with different kinds of SDL2
+// features along with the additional features provided by the SDL2 add-ons.
+//
+// The base SDL2 framework contains following functionality categories:
+// 
+//  1. Basics
+//  2. Video
+//  3. Input
+//  4. Force Feedback
+//  5. Audio
+//  6. Threads
+//  7. Timers
+//  8. File abstraction
+//  9. Shared object support
+// 10. Platform and CPU information
+// 11. Power Management
+// 12. Platforms and standard library functionality
+// ============================================================================
 #include <SDL.h>
 
 static SDL_atomic_t sAtomicInt;
